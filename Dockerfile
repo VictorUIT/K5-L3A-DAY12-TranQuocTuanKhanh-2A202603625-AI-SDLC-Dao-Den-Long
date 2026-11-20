@@ -4,6 +4,7 @@
 #   docker run --rm -v "$PWD/out:/out" dao-den-long node src/headless/cli.js --seed 1 --night 1 --ticks 3600 --out /out/run.jsonl
 #   docker run --rm -p 4173:4173 dao-den-long          # play at http://localhost:4173
 FROM node:20.18.1-bookworm-slim
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
