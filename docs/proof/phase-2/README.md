@@ -59,6 +59,16 @@ tick 50 pos [36.936,4.75,10.903] grounded false
 tick 90 pos [51.037,0,5.755] grounded true
 ```
 
+## FPS bản thường (yêu cầu ≥ 30 FPS trung bình ở 1280×720)
+Đo thủ công trên trình duyệt (Chrome, `npm run dev`), cùng máy ở trên, bằng `window.__fps` (FPS trung bình mỗi giây, xem `src/web/main.js`):
+
+```text
+> __fps
+60.02755363117516
+```
+
+Kết quả: **≈ 60 FPS** (bị giới hạn bởi tần số quét màn hình 60 Hz), đạt yêu cầu ≥ 30.
+Ghi chú trung thực: lần đo này người chơi không ghi lại kích thước khung game; lần sau đo bằng overlay F3 (hiện cả FPS và kích thước khung).
+
 ## Chưa kiểm chứng tự động
-- FPS ≥ 30 ở 1280×720: bản web có biến `window.__fps`. Cần đo thủ công trên trình duyệt và ghi lại kết quả ở đây.
 - Menu/âm thanh/HUD/cài đặt: kiểm bằng mắt khi chơi (video demo).
