@@ -29,7 +29,7 @@
 - `tests/helpers.js`: `run()` gọi CLI thật và `quiet()` tắt mọi spawn ngẫu nhiên, nên viết scenario mới chỉ mất vài dòng.
 
 ## Token và chi phí
-- _(điền: chạy `/cost` trong Claude Code, ghi tổng token và chi phí ước tính)_
+- Đến hết Phase 3: 116 lần gọi model, ~192 nghìn token output, ~20.3 triệu token đọc cache (~98% tổng). Gói Claude Pro: dùng 72% hạn mức phiên 5 giờ, 34% hạn mức tuần. Chi tiết: [ai-log.md](ai-log.md).
 - Cách tiết kiệm đã dùng: một phiên agent duy nhất, không dùng sub-agent; đọc spec một lần rồi lưu file; sửa bằng patch nhỏ thay vì viết lại cả file; test chạy khoảng 2 giây nên vòng lặp sửa và kiểm rất rẻ.
 
 ## Nếu làm lại
