@@ -38,6 +38,9 @@ Kết luận: tăng do TurboFan liên tục tối ưu/bỏ tối ưu code. Chọ
 ```
 Test Phase 4 (`tests/phase4.test.js`): contract v1.3, luật bảng xếp hạng (tên, top 10, sắp xếp, ISO 8601), lưu trên đĩa + `--export-leaderboard`, cảnh bench, soak.
 
+## Video demo
+[demo.mp4](https://github.com/VictorUIT/K5-L3A-DAY12-TranQuocTuanKhanh-2A202603625-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4) (4:29, đính kèm Release v1.0.0).
+
 ## Kiểm thủ công (checklist)
 - [x] Bench mở cửa sổ 1280×720, camera bay vòng (ảnh: [docs/screenshot.png](../../screenshot.png)).
 - [ ] Đổi phím / báo trùng / khôi phục mặc định, phụ đề, giảm chuyển động, chữ lớn: kiểm trong video demo.

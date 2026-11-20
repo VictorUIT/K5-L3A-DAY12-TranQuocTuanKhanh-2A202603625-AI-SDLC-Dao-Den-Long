@@ -1,6 +1,6 @@
 # Đảo Đèn Lồng v1.0.0
 
-> 🎬 **Video demo:** _(link sẽ cập nhật sau khi quay, đính kèm ở [Release v1.0.0](https://github.com/VictorUIT/K5-L3A-DAY12-TranQuocTuanKhanh-2A202603625-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0))_
+> 🎬 **Video demo (4:29):** [demo.mp4](https://github.com/VictorUIT/K5-L3A-DAY12-TranQuocTuanKhanh-2A202603625-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4) · đính kèm ở [Release v1.0.0](https://github.com/VictorUIT/K5-L3A-DAY12-TranQuocTuanKhanh-2A202603625-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0)
 
 Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi, gom đom đóm để thắp và giữ dầu cho các Đèn Lồng Lớn, né Bóng Mực trong sương đen, giữ đảo sáng tới bình minh qua 3 Đêm. Bài lab AI in Action Day 12 (đề bài ở [docs/lab/](docs/lab/README.md)).
 
