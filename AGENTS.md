@@ -9,7 +9,7 @@
 - `tests/`: `node:test` tests. Run with `npm test`.
 
 ## Rules
-1. The Test Contract (see `docs/notes/` for the copied spec) is the source of truth for headless I/O. Match formats exactly.
+1. The Test Contract (`docs/lab/PRD-0.md`, section "Test Contract v1.0") is the source of truth for headless I/O. Match formats exactly.
 2. Never edit expected outputs to make a test pass. If a test is wrong because the requirements changed, fix it or delete it and record why in `docs/notes/`.
 3. Determinism: same input + seed must give byte-identical headless output. Verify by running twice.
 4. Ambiguity: do not silently guess. Pick a value, record it in `docs/notes/assumptions.md` (and in the contract declaration file if the contract requires one).
