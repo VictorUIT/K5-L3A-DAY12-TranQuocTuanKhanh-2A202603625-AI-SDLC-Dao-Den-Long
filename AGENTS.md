@@ -9,7 +9,9 @@
 - `tests/`: `node:test` tests. Run with `npm test`.
 
 ## Rules
-1. Source of truth: Test Contract **v1.1** = `docs/lab/PRD-0.md` (v1.0) + `docs/lab/TICKET-02.md` Part 4. Standard numbers and maps (TICKET-02 Parts 1-2) override anything older. Match formats exactly.
+1. Source of truth: Test Contract **v1.2** = `docs/lab/PRD-0.md` (v1.0) + `docs/lab/TICKET-02.md` Part 4 (v1.1) + `docs/lab/TICKET-03.md` §7 (v1.2). Later tickets override earlier rules (`[THAY THẾ]`). Match formats exactly.
+   - Change requests: write an ADR in `docs/adr/`, list breaking changes in `CHANGELOG.md`, and mark every changed old test with `UPDATED Phase N` / `REPLACED Phase N` + the reason. Never `skip` a test.
+   - Lantern fuel is integer 1/60 units (like timers); round only on output.
    - Numbers live in `src/core/tuning.js` (`TUNING` mirrors `game.contract.json`, `C` = other standard constants), maps in `src/core/maps.js`.
    - `step()` in `src/core/world.js` MUST follow the mandated per-tick order (TICKET-02 "Thứ tự xử lý trong một tick"); keep the numbered comments in sync.
    - Timers are integer tick counters, never float seconds.

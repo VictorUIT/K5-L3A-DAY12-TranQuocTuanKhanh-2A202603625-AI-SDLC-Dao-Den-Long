@@ -33,27 +33,27 @@ docker run --rm dao-den-long npm test
 | `Esc` / `P` | Tạm dừng (Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu) |
 | `F3` | Hiện/ẩn bộ đếm FPS |
 
-Ba Đêm: Đảo Bến → Đảo Cau → Đảo Chuông. Đom đóm được nhặt tự động. Thắp hết đèn để thắng; hết Ngọn Lửa hoặc trời sáng thì thua và được chơi lại Đêm đó.
+Ba Đêm: Đảo Bến → Đảo Cau → Đảo Chuông (240 / 270 / 300 s). Đèn thắp rồi vẫn **cạn dầu** (1/s, Bóng Mực hút thêm 5/s). Bấm `E` ở đèn đang sáng để châm dầu. **Thắng** khi còn sống lúc bình minh và có ít nhất 60% số đèn đang sáng (3/5, 4/6, 5/7). Thua khi hết Ngọn Lửa hoặc không đủ đèn lúc bình minh, và được chơi lại Đêm đó.
 
-## Cách tính điểm (chuẩn TICKET-02)
+## Cách tính điểm (chuẩn TICKET-03)
 | Sự kiện | Điểm |
 |---|---|
-| Mỗi đom đóm nạp vào đèn | +10 |
-| Thắp 1 đèn | +100 |
-| Mỗi Bóng Mực trúng Tỏa Sáng | +5 |
-| Khi thắng: mỗi giây còn lại | +2 |
-| Khi thắng: mỗi Ngọn Lửa còn lại | +50 |
+| Mỗi đom đóm nạp vào đèn (thắp, thắp lại, châm dầu) | +5 |
+| Thắp lần đầu / thắp lại | +100 / +40 |
+| Tỏa Sáng trúng 1 Bóng Mực (đang hút dầu) | +5 (+15) |
+| Bình minh khi thắng: mỗi đèn đang sáng | +50 + floor(dầu) |
+| Bình minh khi thắng: mỗi Ngọn Lửa còn lại | +50 |
 
-Tổng điểm là tổng điểm các Đêm đã thắng.
+Tổng điểm là tổng điểm các Đêm đã thắng. Sức chứa đom đóm = 10 + 2 × số lần thắp thành công trong Đêm (tối đa 20). Trong Cài đặt có tùy chọn **Bảng màu dễ phân biệt**.
 
-## Headless (Test Contract v1.1) và test
+## Headless (Test Contract v1.2) và test
 
 ```bash
 node src/headless/cli.js --seed 1 --night 1 --ticks 3600 --out out.jsonl [--scenario s.json] [--inputs i.json] [--snapshot-every 10]
 npm test
 ```
 
-`--night` nhận 1, 2, 3. Khai báo số liệu: [game.contract.json](game.contract.json). Spec và acceptance criteria: [docs/spec/](docs/spec/phase-2.md). Giả định: [docs/notes/assumptions.md](docs/notes/assumptions.md). Bằng chứng: [docs/proof/](docs/proof/).
+`--night` nhận 1, 2, 3. Khai báo số liệu: [game.contract.json](game.contract.json). Spec: [docs/spec/](docs/spec/phase-2.md). Quyết định thiết kế: [docs/adr/](docs/adr/). Thay đổi: [CHANGELOG.md](CHANGELOG.md). Giả định: [docs/notes/assumptions.md](docs/notes/assumptions.md). Bằng chứng: [docs/proof/](docs/proof/).
 
 ## Giả định chính
 Chi tiết đầy đủ và lý do: [docs/notes/assumptions.md](docs/notes/assumptions.md). Trả lời của trợ giảng: [CP1](docs/notes/ta-cp1-answers.md), [CP2](docs/notes/ta-qa.md).

@@ -54,3 +54,18 @@ Chỗ ticket vẫn chưa nói, mình tự chọn:
 | Tăng tốc/dừng | Tức thời (0 s ≤ 0.1 s). |
 | Vách / dốc | Mặt đất cao hơn chân > 0.35 m là vách; dốc (độ dốc 0.5) đi lên được. |
 | `end.state` khi hết `--ticks` lúc đang tạm dừng | `"paused"`. |
+
+## Phase 3: TICKET-03 (contract v1.2)
+Quyết định thiết kế: [docs/adr/0001-lantern-fuel-and-dawn-win.md](../adr/0001-lantern-fuel-and-dawn-win.md). Thay đổi phá vỡ tương thích: [CHANGELOG.md](../../CHANGELOG.md).
+
+| Chỗ mơ hồ | Cách hiểu |
+|---|---|
+| Tốc độ Bóng Mực đi tới đèn yếu | Dùng tốc độ Bóng Mực của Đêm (4.0 / 4.5 m/s), vì đây là hành vi có mục tiêu. |
+| "đi về đèn tắt gần nhất như trước" | Bóng `wander` không có đèn yếu thì lượn về phía đèn tắt gần nhất với tốc độ lượn (1.5 m/s). |
+| Ưu tiên khi đang `wander` | Phát hiện Mây (≤ 12 m → `chase`) xét trước, sau đó mới chọn đèn yếu. |
+| Hút dầu và sự kiện | Bóng chuyển `drain` ngay trong tick tới ≤ 2 m; bắt đầu hút từ tick sau (bước 2). `fuel_drain` ghi ở mỗi tick thứ 60, 120, … tính từ lúc bắt đầu hút của từng con. |
+| Đèn đầy dầu | Vì dầu hao trước bước tương tác, đèn vừa thắp ở tick trước đã còn 99.98, nên vẫn châm được 1 đom đóm. Đúng theo công thức `ceil((100 − fuel)/10)`. |
+| Đẩy ra khi châm lên ≥ 30 | Dùng chung cơ chế với "đèn vừa thắp": một đèn chuyển từ không an toàn sang an toàn thì đẩy mọi Bóng Mực trong 6 m ra mép. |
+| Điểm Tỏa Sáng +15 | +15 thay cho +5 (tổng), không cộng dồn. |
+| `fuel` trong scenario | Số thực, đổi sang đơn vị nguyên 1/60 bằng `round(fuel × 60)`. Đèn `lit: true` không ghi `ever_lit` thì coi như đã từng sáng. |
+| Điểm trong tuning | `score.per_mote = 5`, `per_second_left = 0` (bỏ thưởng thời gian). Thắp lại +40, +15 khi trúng bóng đang hút, +50 mỗi đèn sáng lúc bình minh nằm trong `C.score_*`. |
