@@ -24,6 +24,7 @@ Bản web tĩnh: `npm run build` rồi phục vụ thư mục `dist/`.
 | `E` | Nạp đom đóm vào đèn gần nhất |
 | `F` | Tỏa Sáng (tốn 3 đom đóm, làm choáng Bóng Mực, xua Gió Lạc) |
 | `Esc` / `P` | Tạm dừng (Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu) |
+| `F3` | Hiện/ẩn bộ đếm FPS |
 
 Ba Đêm: Đảo Bến → Đảo Cau → Đảo Chuông. Đom đóm được nhặt tự động. Thắp hết đèn để thắng; hết Ngọn Lửa hoặc trời sáng thì thua và được chơi lại Đêm đó.
 

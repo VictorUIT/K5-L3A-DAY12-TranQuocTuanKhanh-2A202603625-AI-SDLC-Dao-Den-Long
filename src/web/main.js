@@ -156,12 +156,19 @@ function sync(kind, items) {
 }
 const clearEntities = () => { for (const k in maps) sync(k, []); };
 
+// ---------- FPS overlay (F3) for the >= 30 FPS @1280x720 requirement ----------
+const fpsBox = document.createElement('div');
+fpsBox.className = 'hidden';
+fpsBox.style.cssText = 'position:fixed;bottom:8px;left:8px;font:13px monospace;background:#000a;padding:4px 8px;border-radius:6px;z-index:9';
+document.body.appendChild(fpsBox);
+
 // ---------- Input ----------
 const keys = new Set();
 let yaw = 0, dragging = false, lastX = 0, pendingPause = false;
 addEventListener('keydown', (e) => {
   keys.add(e.code);
   if ((e.code === 'Escape' || e.code === 'KeyP') && mode === 'play') pendingPause = true;
+  if (e.code === 'F3') { e.preventDefault(); fpsBox.classList.toggle('hidden'); }
   audio.unlock();
 });
 addEventListener('keyup', (e) => keys.delete(e.code));
@@ -222,7 +229,11 @@ window.__fps = 0;
 renderer.setAnimationLoop((now) => {
   const dt = Math.min((now - last) / 1000, 0.25);
   last = now;
-  fpsFrames++; fpsT += dt; if (fpsT >= 1) { window.__fps = fpsFrames / fpsT; fpsFrames = 0; fpsT = 0; }
+  fpsFrames++; fpsT += dt;
+  if (fpsT >= 1) {
+    window.__fps = fpsFrames / fpsT; fpsFrames = 0; fpsT = 0;
+    fpsBox.textContent = `FPS ${window.__fps.toFixed(1)} · ${innerWidth}×${innerHeight}`;
+  }
   if (keys.has('ArrowLeft')) yaw += 90 * dt * settings.sens;
   if (keys.has('ArrowRight')) yaw -= 90 * dt * settings.sens;
   if (mode === 'play') {
