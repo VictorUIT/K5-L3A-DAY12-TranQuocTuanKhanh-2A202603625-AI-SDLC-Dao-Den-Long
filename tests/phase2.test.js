@@ -3,6 +3,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { run, quiet, near } from './helpers.js';
 
+test('scenario shades start in wander (TA answer), spawned ones in spawning for 60 ticks', () => {
+  const r = run({ ticks: 1, every: 1, scenario: quiet({ shades: [{ id: 'A', pos: [30, 1, 0] }] }) });
+  assert.equal(r.snaps[0].shades[0].state, 'wander');
+  const s = run({ ticks: 361, every: 1, scenario: { random_motes: false, random_drifters: false } });
+  assert.equal(s.snaps[359].shades[0].state, 'spawning');
+  assert.notEqual(s.snaps[360].shades[0].state, 'spawning');
+});
+
 test('v1.1 snapshot shape', () => {
   const s = run({ night: 2, ticks: 0 }).snaps[0];
   for (const k of ['night', 'wind', 'motes', 'drifters', 'charms']) assert.ok(k in s, k);

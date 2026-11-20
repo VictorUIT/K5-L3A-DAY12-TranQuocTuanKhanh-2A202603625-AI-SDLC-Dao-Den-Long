@@ -43,10 +43,7 @@ if (o.inputs) { inputs = readJson(o.inputs, 'inputs'); const e = validateInputs(
 
 const world = createWorld({ seed, night, scenario });
 const timeline = new InputTimeline(inputs.frames);
-const lines = [
-  JSON.stringify({ type: 'event', tick: 0, name: 'night_start', data: { night } }),
-  JSON.stringify(snapshot(world)),
-];
+const lines = [JSON.stringify(snapshot(world))];
 const over = () => world.state === 'won' || world.state === 'lost';
 for (let k = 0; k < ticks && !over(); k++) {
   step(world, timeline.at(k), (name, data) => lines.push(JSON.stringify({ type: 'event', tick: k + 1, name, data })));

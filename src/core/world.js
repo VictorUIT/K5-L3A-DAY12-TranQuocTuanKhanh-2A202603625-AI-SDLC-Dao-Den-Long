@@ -66,7 +66,7 @@ export function createWorld({ seed = 1, night = 1, scenario = null } = {}) {
   if (sc.shades) w.shades = sc.shades.map((s) => {
     const id = s.id ?? `S${w.nextShade}`;
     w.nextShade++;
-    const state = s.state ?? 'chase';
+    const state = s.state ?? 'wander'; // TA: scenario shades skip spawning and start in wander
     const sh = newShade(id, s.pos, state);
     if (s.state_ticks_left != null) sh.left = s.state_ticks_left;
     else if (state === 'stunned') sh.left = C.stun_ticks;
@@ -106,6 +106,7 @@ const ground = (w, x, z) => w.map.ground(x, z);
 export function step(w, input = {}, emit = () => {}) {
   if (w.state === 'won' || w.state === 'lost') return w;
   w.tick += 1;
+  if (!w.started) { w.started = true; emit('night_start', { night: w.night }); } // TA: emitted in the first step (tick 1)
   const btn = { jump: !!input.jump, interact: !!input.interact, pulse: !!input.pulse, dash: !!input.dash, pause: !!input.pause };
   const pressed = (k) => btn[k] && !w.prev[k];
   const done = () => { w.prev = btn; return w; };

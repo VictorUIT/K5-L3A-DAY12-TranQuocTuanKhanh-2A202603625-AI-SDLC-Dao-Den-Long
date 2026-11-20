@@ -38,18 +38,18 @@ Ticket đã làm rõ nhiều chỗ Phase 1 tự giả định. Những thay đ�
 Chỗ ticket vẫn chưa nói, mình tự chọn:
 | Chỗ mơ hồ | Cách hiểu |
 |---|---|
-| Thời gian trạng thái `spawning` của Bóng Mực | 60 tick; trong lúc đó không di chuyển, không gây hit (vẫn trúng Tỏa Sáng được). |
-| Trạng thái ban đầu của Bóng Mực trong scenario | `chase` nếu không ghi `state` (v1.0: "hoạt động bình thường ngay lập tức"); quy tắc phát hiện 12/18 m áp dụng từ tick sau. |
+| Thời gian trạng thái `spawning` của Bóng Mực | **Trợ giảng xác nhận:** 60 tick, không gây sát thương, mờ dần hiện ra, rồi chuyển `wander`. |
+| Trạng thái ban đầu của Bóng Mực trong scenario | **Trợ giảng xác nhận:** bỏ qua spawning, bắt đầu ở `wander` (trước đó mình chọn `chase`, đã sửa). |
 | `wander` | Lượn tới điểm ngẫu nhiên trong bán kính 8 m với 1.5 m/s; vẫn gây hit nếu chạm. |
 | Bóng Mực và địa hình | Bóng bay lơ lửng: tâm cao 1.0 m trên mặt đất bên dưới (0 nếu là biển mây), đi xuyên tầng; tháp chuông và vùng an toàn là vật cản. |
 | "chênh cao" khi chạm | |y tâm Bóng Mực − y chân Mây| ≤ 1.5. |
-| Điểm xuất phát Đêm 3 | (0,0,−30), vì (0,0,0) nằm trong tháp chuông. Đêm 2 xuất phát (0,0,0). |
+| Điểm xuất phát | Đêm 2: **trợ giảng xác nhận** (0,0,0), quay về +Z. Đêm 3: trợ giảng để người làm tự quyết → chọn (0,0,−30), quay về +Z: (0,0,0) nằm trong tháp chuông; (0,0,−30) ở tầng 0, nửa z < 0, xa vách và dốc, gần đèn L6/L7. |
 | Đếm trần 30 đom đóm | Tính mọi đom đóm đang có (cả loại rơi). "Điểm trống" là điểm sinh chưa có đom đóm random nào. |
 | 2 Bóng Mực ở tick 300 | Chọn 2 điểm khác nhau trong các điểm hợp lệ (cách người chơi ≥ 15 m), chọn bằng RNG có seed. |
 | Gió Lạc: điểm sương | Dùng các điểm sinh Bóng Mực của Đêm. Đã `removed` thì vẫn nằm trong mảng `drifters` với `state: "removed"`. Một con đã bị pulse lúc chase cũng không cướp nữa. |
-| `invuln` trong snapshot | boolean (đang bất tử hay không). Các thời gian `_s` là giây còn lại, làm tròn 3 chữ số. |
+| `invuln` trong snapshot | **Trợ giảng xác nhận:** boolean. Các thời gian `_s` là giây còn lại, làm tròn 3 chữ số. |
 | `wind.dir_deg` | Góc từ +X ngược chiều kim đồng hồ (giống bản đồ), `null` khi không có gió. Cơn gió bắt đầu ở sim_tick 1800k và kéo dài 300 tick. |
-| `night_start` | Ghi ở dòng đầu tiên với `tick: 0`, trước snapshot 0. |
+| `night_start` | **Trợ giảng xác nhận:** ghi trong bước đầu tiên, `tick: 1` (trước đó mình ghi tick 0, đã sửa). |
 | Lướt trên không | Giữ nguyên độ cao (vy = 0) suốt 12 tick, sau đó rơi tiếp. Nhảy không được khi đang lướt. |
 | Tăng tốc/dừng | Tức thời (0 s ≤ 0.1 s). |
 | Vách / dốc | Mặt đất cao hơn chân > 0.35 m là vách; dốc (độ dốc 0.5) đi lên được. |

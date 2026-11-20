@@ -23,9 +23,10 @@ test('determinism on every night (incl. generated ids)', () => {
   }
 });
 
-test('tick model: night_start + snapshot 0 before input, N steps, cadence, end last', () => {
+test('tick model: snapshot 0 before input, night_start at tick 1, N steps, cadence, end last', () => {
   const r = run({ ticks: 25, every: 10, scenario: quiet(), inputs: { frames: [{ tick: 0, move: [1, 0] }] } });
-  assert.deepEqual(r.lines[0], { type: 'event', tick: 0, name: 'night_start', data: { night: 1 } });
+  assert.equal(r.lines[0].type, 'snapshot');
+  assert.deepEqual(r.lines[1], { type: 'event', tick: 1, name: 'night_start', data: { night: 1 } });
   assert.deepEqual(r.snaps.map((s) => s.tick), [0, 10, 20]);
   assert.deepEqual(r.snaps[0].player.pos, [0, 0, 0]);
   assert.deepEqual(r.end, { type: 'end', ticks: 25, state: 'playing', score: 0 });
