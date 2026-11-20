@@ -7,9 +7,17 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div id="hud"></div>
-  <div id="help">WASD đi · Kéo chuột / ←→ xoay camera · Space nhảy · E nạp đèn · F tỏa sáng · R chơi lại</div>
-  <div id="msg"></div>
+  <div id="hud" class="hidden">
+    <div id="flames"></div>
+    <div id="clock"></div>
+    <div id="tr"><span id="lamps"></span><span id="score"></span></div>
+    <div id="bar"></div>
+    <div id="cds"><span id="cdDash">Lướt</span><span id="cdPulse">Tỏa Sáng</span><span id="cdCharm"></span></div>
+    <div id="prompt"></div>
+    <div id="arrow">➤</div>
+    <div id="windWarn"></div>
+  </div>
+  <div id="screen" class="overlay"></div>
   <script type="module" src="./main.js"></script>
 </body>
 </html>
