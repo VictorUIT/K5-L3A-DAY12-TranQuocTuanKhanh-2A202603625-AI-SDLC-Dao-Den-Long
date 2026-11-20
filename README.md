@@ -12,7 +12,14 @@ npm install
 npm run dev        # mở URL được in ra (vd. http://localhost:5173)
 ```
 
-Bản web tĩnh: `npm run build` rồi phục vụ thư mục `dist/`.
+Bản web tĩnh: `npm run release` tạo `release/dao-den-long-web-v*.tar.gz` (giải nén rồi `python3 -m http.server`).
+
+Chạy bằng Docker (Linux, không cần cài Node):
+```bash
+docker build -t dao-den-long .
+docker run --rm -p 4173:4173 dao-den-long      # chơi ở http://localhost:4173
+docker run --rm dao-den-long npm test
+```
 
 ## Điều khiển
 | Phím | Hành động |
