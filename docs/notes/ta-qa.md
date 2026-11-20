@@ -1,5 +1,8 @@
 # Hỏi đáp với trợ giảng (nguyên văn)
 
+## Phase 1 (CP1)
+Nguyên văn ở [ta-cp1-answers.md](ta-cp1-answers.md). Đã đối chiếu: code khớp cả 7 mục, không cần sửa logic. Theo yêu cầu "ghi giả định vào README", README có thêm mục "Giả định chính".
+
 ## Phase 2
 **Q: spawning của Bóng Mực kéo dài bao lâu?**
 A: 1,0 giây (60 tick). Trong lúc đó Bóng Mực không gây sát thương, mờ dần hiện ra, rồi chuyển sang wander. Bóng Mực do scenario dựng sẵn thì bỏ qua spawning, bắt đầu ngay ở trạng thái wander.
