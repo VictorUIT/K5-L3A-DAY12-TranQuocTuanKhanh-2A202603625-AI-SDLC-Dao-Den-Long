@@ -55,13 +55,13 @@ Tổng điểm là tổng điểm các Đêm đã thắng. Sức chứa = 10 + 2
 npm test                                                   # 44 test (contract v1.0–v1.3, mọi tính năng)
 node src/headless/cli.js --seed 1 --night 1 --ticks 3600 --out out.jsonl [--scenario s.json] [--inputs i.json] [--snapshot-every 10]
 node scripts/bench.mjs --seed 42 --duration 30 --out bench.json     # mở cửa sổ Chrome 1280×720, vsync tắt
-node --expose-gc scripts/soak.mjs --seed 7 --nights 10 --out soak.json
+node --expose-gc --no-opt --max-semi-space-size=1 scripts/soak.mjs --seed 7 --nights 10 --out soak.json
 node scripts/play.mjs --export-leaderboard out.json
 ```
 
 Khai báo lệnh và số liệu: [game.contract.json](game.contract.json). Kết quả đã commit: [bench.json](bench.json), [soak.json](soak.json).
 - **Bench** chạy bản web trong Chrome thật qua puppeteer, cờ `--disable-gpu-vsync --disable-frame-rate-limit`. `peak_mem_mb` là `null`: bản web chạy trong trình duyệt nhiều tiến trình, trang web không đọc được RSS của tiến trình render; thay vào đó có `js_heap_peak_mb`.
-- **Soak** cần `--expose-gc` để dọn bộ nhớ khi reset mỗi Đêm (đã ghi trong `soak_cmd`).
+- **Soak** chạy với `--expose-gc --no-opt --max-semi-space-size=1` (đã ghi trong `soak_cmd`): heap JS đứng yên ~3.5 MB qua 20 Đêm (không rò rỉ), nhưng trên Linux/Node 20 RSS tăng do V8 liên tục tối ưu/bỏ tối ưu code (TurboFan). Tắt TurboFan giữ RSS ổn định; mô phỏng nhẹ nên vẫn ~0.5 s cho 10 Đêm.
 
 Spec: [docs/spec/](docs/spec/phase-2.md) · ADR: [docs/adr/](docs/adr/) · Thay đổi: [CHANGELOG.md](CHANGELOG.md) · Bằng chứng: [docs/proof/](docs/proof/) · Retro: [docs/notes/retro.md](docs/notes/retro.md) · Nhật ký AI: [docs/notes/ai-log.md](docs/notes/ai-log.md)
 

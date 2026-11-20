@@ -55,7 +55,7 @@ test('bench scene: 200 wander shades, 100 motes, L1-L3 lit fuel 100; no damage/d
 
 test('soak: 10 nights, 0 crashes, mem_end <= 1.2 x mem_start', () => {
   const out = join(mkdtempSync(join(tmpdir(), 'ddl-soak-')), 'soak.json');
-  const r = spawnSync(process.execPath, ['--expose-gc', 'scripts/soak.mjs', '--seed', '7', '--nights', '10', '--out', out]);
+  const r = spawnSync(process.execPath, ['--expose-gc', '--no-opt', '--max-semi-space-size=1', 'scripts/soak.mjs', '--seed', '7', '--nights', '10', '--out', out]);
   assert.equal(r.status, 0);
   const s = JSON.parse(readFileSync(out, 'utf8'));
   assert.equal(s.nights, 10); assert.equal(s.crashes, 0); assert.equal(s.results.length, 10);

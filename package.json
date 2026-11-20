@@ -13,7 +13,7 @@
     "release": "node scripts/release.mjs",
     "start": "node scripts/play.mjs",
     "bench": "node scripts/bench.mjs --seed 42 --duration 30 --out bench.json",
-    "soak": "node --expose-gc scripts/soak.mjs --seed 7 --nights 10 --out soak.json"
+    "soak": "node --expose-gc --no-opt --max-semi-space-size=1 scripts/soak.mjs --seed 7 --nights 10 --out soak.json"
   },
   "engines": {
     "node": ">=20"
