@@ -2,7 +2,10 @@
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const isVec3 = (v) => Array.isArray(v) && v.length === 3 && v.every(isNum);
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
-const BUTTONS = ['jump', 'interact', 'pulse', 'dash'];
+const BUTTONS = ['jump', 'interact', 'pulse', 'dash', 'pause'];
+const SHADE_STATES = ['spawning', 'wander', 'chase', 'recoil', 'stunned'];
+const DRIFTER_STATES = ['idle', 'chase', 'flee', 'removed'];
+const isTicks = (v) => Number.isInteger(v) && v >= 0;
 
 export function validateInputs(inp) {
   if (!isObj(inp) || !Array.isArray(inp.frames)) return 'expected {"frames": [...]}';
@@ -26,15 +29,34 @@ export function validateScenario(sc) {
     const p = sc.player;
     if (!isObj(p)) return 'player must be an object';
     if ('pos' in p && !isVec3(p.pos)) return 'player.pos must be [x,y,z]';
-    for (const k of ['carried', 'flames']) if (k in p && !(Number.isInteger(p[k]) && p[k] >= 0)) return `player.${k} must be a non-negative integer`;
+    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) if (k in p && !isTicks(p[k])) return `player.${k} must be a non-negative integer`;
   }
-  for (const k of ['random_motes', 'random_shades']) if (k in sc && typeof sc[k] !== 'boolean') return `${k} must be boolean`;
-  if ('motes' in sc && !(Array.isArray(sc.motes) && sc.motes.every(isVec3))) return 'motes must be a list of [x,y,z]';
+  for (const k of ['random_motes', 'random_shades', 'random_drifters', 'wind_enabled']) if (k in sc && typeof sc[k] !== 'boolean') return `${k} must be boolean`;
+  if ('motes' in sc && !(Array.isArray(sc.motes) && sc.motes.every((m) => isVec3(m) || (isObj(m) && isVec3(m.pos))))) return 'motes must be a list of [x,y,z]';
   if ('shades' in sc) {
     if (!Array.isArray(sc.shades)) return 'shades must be a list';
     for (const s of sc.shades) {
       if (!isObj(s) || !isVec3(s.pos)) return 'each shade needs pos [x,y,z]';
       if ('id' in s && typeof s.id !== 'string') return 'shade id must be a string';
+      if ('state' in s && !SHADE_STATES.includes(s.state)) return `shade state must be one of ${SHADE_STATES.join(', ')}`;
+      if ('state_ticks_left' in s && !isTicks(s.state_ticks_left)) return 'shade state_ticks_left must be a non-negative integer';
+    }
+  }
+  if ('drifters' in sc) {
+    if (!Array.isArray(sc.drifters)) return 'drifters must be a list';
+    for (const d of sc.drifters) {
+      if (!isObj(d) || !isVec3(d.pos)) return 'each drifter needs pos [x,y,z]';
+      if ('id' in d && typeof d.id !== 'string') return 'drifter id must be a string';
+      if ('state' in d && !DRIFTER_STATES.includes(d.state)) return `drifter state must be one of ${DRIFTER_STATES.join(', ')}`;
+      if ('stolen' in d && !isTicks(d.stolen)) return 'drifter stolen must be a non-negative integer';
+    }
+  }
+  if ('charms' in sc) {
+    if (!Array.isArray(sc.charms)) return 'charms must be a list';
+    for (const c of sc.charms) {
+      if (!isObj(c)) return 'each charm must be an object';
+      if ('pos' in c && !isVec3(c.pos)) return 'charm pos must be [x,y,z]';
+      if ('available' in c && typeof c.available !== 'boolean') return 'charm available must be boolean';
     }
   }
   if ('lanterns' in sc) {
@@ -52,7 +74,7 @@ export function validateScenario(sc) {
 
 // Fields persist until a later frame changes them. Defaults: move [0,0], yaw 0, buttons false.
 export class InputTimeline {
-  constructor(frames) { this.frames = frames; this.i = 0; this.cur = { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false }; }
+  constructor(frames) { this.frames = frames; this.i = 0; this.cur = { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false, pause: false }; }
   at(tick) {
     while (this.i < this.frames.length && this.frames[this.i].tick <= tick) {
       const f = this.frames[this.i++];
