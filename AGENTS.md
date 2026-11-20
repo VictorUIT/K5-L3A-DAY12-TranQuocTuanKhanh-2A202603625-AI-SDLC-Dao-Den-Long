@@ -9,17 +9,22 @@
 - `tests/`: `node:test` tests. Run with `npm test`.
 
 ## Rules
-1. The Test Contract (`docs/lab/PRD-0.md`, section "Test Contract v1.0") is the source of truth for headless I/O. Match formats exactly.
+1. Source of truth: Test Contract **v1.1** = `docs/lab/PRD-0.md` (v1.0) + `docs/lab/TICKET-02.md` Part 4. Standard numbers and maps (TICKET-02 Parts 1-2) override anything older. Match formats exactly.
+   - Numbers live in `src/core/tuning.js` (`TUNING` mirrors `game.contract.json`, `C` = other standard constants), maps in `src/core/maps.js`.
+   - `step()` in `src/core/world.js` MUST follow the mandated per-tick order (TICKET-02 "Thứ tự xử lý trong một tick"); keep the numbered comments in sync.
+   - Timers are integer tick counters, never float seconds.
+   - Web-only extras (sound, effects, creative additions) must not change headless output.
 2. Never edit expected outputs to make a test pass. If a test is wrong because the requirements changed, fix it or delete it and record why in `docs/notes/`.
 3. Determinism: same input + seed must give byte-identical headless output. Verify by running twice.
 4. Ambiguity: do not silently guess. Pick a value, record it in `docs/notes/assumptions.md` (and in the contract declaration file if the contract requires one).
-5. Before saying something is done: run `npm test` and the relevant headless scenario, and paste real output into `docs/proof/`.
+5. Before saying something is done: follow the `headless-verify` skill (`.claude/skills/headless-verify/SKILL.md`): `npm test`, a targeted headless scenario, real output into `docs/proof/`.
 6. Small, focused commits. Do not commit `node_modules/`, `dist/`, `.env` or secrets.
 7. Keep changes scoped to the current phase ticket. Do not implement future features speculatively.
+8. Every new feature needs at least one headless scenario test (`tests/phase2.test.js` style) and an acceptance criterion in `docs/spec/`.
 
 ## Commands
 - `npm install`: install deps
-- `npm run dev`: play in browser (WASD)
+- `npm run dev`: play in browser
 - `npm run headless -- <args>`: headless run
 - `npm test`: all tests
 - `npm run build`: static web build into `dist/`

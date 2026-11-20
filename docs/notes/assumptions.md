@@ -4,7 +4,9 @@
 - Stack: Three.js + Node (JS thuần, ES modules). Lý do: logic thuần JS chạy headless bằng `node` không cần phụ thuộc gì, bản 3D chạy trên trình duyệt, release là thư mục web tĩnh, chạy được trên macOS/Linux.
 - Mô phỏng dùng bước thời gian cố định 60 tick/giây, RNG có seed (mulberry32), để kết quả tất định.
 
-## Phase 1: PRD-0 (tự giả định khi chưa có trả lời của trợ giảng; sẽ cập nhật)
+## Phase 1: PRD-0 (tự giả định khi chưa có trả lời của trợ giảng)
+
+> **Đã bị thay ở Phase 2**: mọi số liệu tự chọn dưới đây được thay bằng số chuẩn của TICKET-02. Các cách hiểu còn hiệu lực được nhắc lại ở mục Phase 2.
 
 Số tuning: xem `game.contract.json` (nguồn thật là `src/core/tuning.js`, test kiểm tra hai bên khớp nhau).
 
@@ -24,3 +26,31 @@ Số tuning: xem `game.contract.json` (nguồn thật là `src/core/tuning.js`, 
 | Sinh ngẫu nhiên | 20 đom đóm ban đầu, thêm 1 con mỗi 4 s (tối đa 20). Bóng Mực đầu tiên ở giây 10, sau đó mỗi 25 s, tối đa 3, xuất hiện ở mép đảo. |
 | Đèn mặc định | 5 đèn trên vòng tròn bán kính 20 m, L1 ở (0,0,20), cách đều 72°. |
 | Bóng Mực | `pos.y = 1.0` (tâm). Trạng thái: `chase`, `stunned`. |
+
+## Phase 2: TICKET-02 (contract v1.1)
+
+Ticket đã làm rõ nhiều chỗ Phase 1 tự giả định. Những thay đổi so với Phase 1:
+- Điểm đom đóm tính lúc **nạp**, không phải lúc nhặt (+10 mỗi con nạp). Thưởng giây còn lại ×2.
+- Đom đóm rơi khi bị đánh **không mất** mà nằm trên đất 480 tick (Phase 1 giả định là mất).
+- Thắng/thua xét **cuối tick** (Phase 1 kết thúc ngay khi thắp đèn cuối).
+- `fall_enabled: true`: đảo không còn rào.
+
+Chỗ ticket vẫn chưa nói, mình tự chọn:
+| Chỗ mơ hồ | Cách hiểu |
+|---|---|
+| Thời gian trạng thái `spawning` của Bóng Mực | 60 tick; trong lúc đó không di chuyển, không gây hit (vẫn trúng Tỏa Sáng được). |
+| Trạng thái ban đầu của Bóng Mực trong scenario | `chase` nếu không ghi `state` (v1.0: "hoạt động bình thường ngay lập tức"); quy tắc phát hiện 12/18 m áp dụng từ tick sau. |
+| `wander` | Lượn tới điểm ngẫu nhiên trong bán kính 8 m với 1.5 m/s; vẫn gây hit nếu chạm. |
+| Bóng Mực và địa hình | Bóng bay lơ lửng: tâm cao 1.0 m trên mặt đất bên dưới (0 nếu là biển mây), đi xuyên tầng; tháp chuông và vùng an toàn là vật cản. |
+| "chênh cao" khi chạm | |y tâm Bóng Mực − y chân Mây| ≤ 1.5. |
+| Điểm xuất phát Đêm 3 | (0,0,−30), vì (0,0,0) nằm trong tháp chuông. Đêm 2 xuất phát (0,0,0). |
+| Đếm trần 30 đom đóm | Tính mọi đom đóm đang có (cả loại rơi). "Điểm trống" là điểm sinh chưa có đom đóm random nào. |
+| 2 Bóng Mực ở tick 300 | Chọn 2 điểm khác nhau trong các điểm hợp lệ (cách người chơi ≥ 15 m), chọn bằng RNG có seed. |
+| Gió Lạc: điểm sương | Dùng các điểm sinh Bóng Mực của Đêm. Đã `removed` thì vẫn nằm trong mảng `drifters` với `state: "removed"`. Một con đã bị pulse lúc chase cũng không cướp nữa. |
+| `invuln` trong snapshot | boolean (đang bất tử hay không). Các thời gian `_s` là giây còn lại, làm tròn 3 chữ số. |
+| `wind.dir_deg` | Góc từ +X ngược chiều kim đồng hồ (giống bản đồ), `null` khi không có gió. Cơn gió bắt đầu ở sim_tick 1800k và kéo dài 300 tick. |
+| `night_start` | Ghi ở dòng đầu tiên với `tick: 0`, trước snapshot 0. |
+| Lướt trên không | Giữ nguyên độ cao (vy = 0) suốt 12 tick, sau đó rơi tiếp. Nhảy không được khi đang lướt. |
+| Tăng tốc/dừng | Tức thời (0 s ≤ 0.1 s). |
+| Vách / dốc | Mặt đất cao hơn chân > 0.35 m là vách; dốc (độ dốc 0.5) đi lên được. |
+| `end.state` khi hết `--ticks` lúc đang tạm dừng | `"paused"`. |

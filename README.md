@@ -20,29 +20,32 @@ Bản web tĩnh: `npm run build` rồi phục vụ thư mục `dist/`.
 | `W A S D` | Đi (theo hướng camera) |
 | Kéo chuột / `←` `→` | Xoay camera |
 | `Space` | Nhảy |
+| `Shift` | Lướt |
 | `E` | Nạp đom đóm vào đèn gần nhất |
-| `F` | Tỏa sáng (tốn ánh sáng, làm choáng và đẩy Bóng Mực) |
-| `R` | Chơi lại |
+| `F` | Tỏa Sáng (tốn 3 đom đóm, làm choáng Bóng Mực, xua Gió Lạc) |
+| `Esc` / `P` | Tạm dừng (Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu) |
 
-Đom đóm được nhặt tự động khi đi qua. Thắp đủ 5 đèn thì thắng; hết lửa hoặc trời sáng thì thua.
+Ba Đêm: Đảo Bến → Đảo Cau → Đảo Chuông. Đom đóm được nhặt tự động. Thắp hết đèn để thắng; hết Ngọn Lửa hoặc trời sáng thì thua và được chơi lại Đêm đó.
 
-## Cách tính điểm
+## Cách tính điểm (chuẩn TICKET-02)
 | Sự kiện | Điểm |
 |---|---|
-| Nhặt 1 đom đóm | +10 |
+| Mỗi đom đóm nạp vào đèn | +10 |
 | Thắp 1 đèn | +100 |
-| Làm choáng 1 Bóng Mực | +20 |
-| Khi thắng: mỗi giây còn lại | +1 |
-| Khi thắng: mỗi lửa còn lại | +50 |
+| Mỗi Bóng Mực trúng Tỏa Sáng | +5 |
+| Khi thắng: mỗi giây còn lại | +2 |
+| Khi thắng: mỗi Ngọn Lửa còn lại | +50 |
 
-## Headless (Test Contract v1.0) và test
+Tổng điểm là tổng điểm các Đêm đã thắng.
+
+## Headless (Test Contract v1.1) và test
 
 ```bash
 node src/headless/cli.js --seed 1 --night 1 --ticks 3600 --out out.jsonl [--scenario s.json] [--inputs i.json] [--snapshot-every 10]
 npm test
 ```
 
-Khai báo số liệu: [game.contract.json](game.contract.json). `fall_enabled` là `false`: đảo có rào vô hình ở bán kính 30 m nên không thể rơi. Giả định cho chỗ mơ hồ: [docs/notes/assumptions.md](docs/notes/assumptions.md). Bằng chứng: [docs/proof/](docs/proof/).
+`--night` nhận 1, 2, 3. Khai báo số liệu: [game.contract.json](game.contract.json). Spec và acceptance criteria: [docs/spec/](docs/spec/phase-2.md). Giả định: [docs/notes/assumptions.md](docs/notes/assumptions.md). Bằng chứng: [docs/proof/](docs/proof/).
 
 ## Cấu trúc
 - `src/core/`: logic game thuần, tất định, dùng chung cho bản chơi và headless
@@ -53,4 +56,6 @@ Khai báo số liệu: [game.contract.json](game.contract.json). `fall_enabled` 
 - `AGENTS.md` / `CLAUDE.md`: harness cho AI agent
 
 ## Sáng tạo của tôi
-_(cập nhật dần)_
+- Âm thanh tự tổng hợp bằng WebAudio (không dùng file ngoài).
+- Mây có khăn đỏ và đèn lồng nhỏ treo trên nón lá; đèn quanh Mây sáng hơn khi mang nhiều đom đóm.
+- Phần thêm chỉ nằm trong `src/web/` nên không ảnh hưởng đầu ra headless (toàn bộ test contract vẫn đạt).
