@@ -3,7 +3,7 @@ const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const isVec3 = (v) => Array.isArray(v) && v.length === 3 && v.every(isNum);
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const BUTTONS = ['jump', 'interact', 'pulse', 'dash', 'pause'];
-const SHADE_STATES = ['spawning', 'wander', 'chase', 'recoil', 'stunned'];
+const SHADE_STATES = ['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain'];
 const DRIFTER_STATES = ['idle', 'chase', 'flee', 'removed'];
 const isTicks = (v) => Number.isInteger(v) && v >= 0;
 
@@ -29,7 +29,7 @@ export function validateScenario(sc) {
     const p = sc.player;
     if (!isObj(p)) return 'player must be an object';
     if ('pos' in p && !isVec3(p.pos)) return 'player.pos must be [x,y,z]';
-    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) if (k in p && !isTicks(p[k])) return `player.${k} must be a non-negative integer`;
+    for (const k of ['carried', 'flames', 'successful_lights', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) if (k in p && !isTicks(p[k])) return `player.${k} must be a non-negative integer`;
   }
   for (const k of ['random_motes', 'random_shades', 'random_drifters', 'wind_enabled']) if (k in sc && typeof sc[k] !== 'boolean') return `${k} must be boolean`;
   if ('motes' in sc && !(Array.isArray(sc.motes) && sc.motes.every((m) => isVec3(m) || (isObj(m) && isVec3(m.pos))))) return 'motes must be a list of [x,y,z]';
@@ -39,6 +39,7 @@ export function validateScenario(sc) {
       if (!isObj(s) || !isVec3(s.pos)) return 'each shade needs pos [x,y,z]';
       if ('id' in s && typeof s.id !== 'string') return 'shade id must be a string';
       if ('state' in s && !SHADE_STATES.includes(s.state)) return `shade state must be one of ${SHADE_STATES.join(', ')}`;
+      if ('target_lantern_id' in s && typeof s.target_lantern_id !== 'string') return 'shade target_lantern_id must be a string';
       if ('state_ticks_left' in s && !isTicks(s.state_ticks_left)) return 'shade state_ticks_left must be a non-negative integer';
     }
   }
@@ -66,6 +67,8 @@ export function validateScenario(sc) {
       if ('pos' in l && !isVec3(l.pos)) return `lantern ${l.id}: pos must be [x,y,z]`;
       if ('lit' in l && typeof l.lit !== 'boolean') return `lantern ${l.id}: lit must be boolean`;
       if ('deposited' in l && !(Number.isInteger(l.deposited) && l.deposited >= 0)) return `lantern ${l.id}: deposited must be a non-negative integer`;
+      if ('fuel' in l && !(isNum(l.fuel) && l.fuel >= 0 && l.fuel <= 100)) return `lantern ${l.id}: fuel must be in [0, 100]`;
+      if ('ever_lit' in l && typeof l.ever_lit !== 'boolean') return `lantern ${l.id}: ever_lit must be boolean`;
     }
   }
   if ('time_left_s' in sc && !(isNum(sc.time_left_s) && sc.time_left_s > 0)) return 'time_left_s must be a positive number';

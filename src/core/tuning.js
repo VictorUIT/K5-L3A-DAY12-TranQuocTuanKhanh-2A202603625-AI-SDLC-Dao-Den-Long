@@ -8,9 +8,9 @@ export const TUNING = {
   interact_radius: 2.0,
   pulse_cost: 3,
   pulse_radius: 5,
-  night1_duration_s: 300,
-  night2_duration_s: 330,
-  night3_duration_s: 360,
+  night1_duration_s: 240,
+  night2_duration_s: 270,
+  night3_duration_s: 300,
   flames: 3,
   invuln_s: 1.5,
   hit_drop_ratio: 0.5,
@@ -24,11 +24,29 @@ export const TUNING = {
   dash_speed: 14,
   dash_duration_s: 0.2,
   dash_cooldown_s: 1.5,
-  score: { per_mote: 10, per_lantern: 100, per_stun: 5, per_second_left: 2, per_flame_left: 50 },
+  fuel_max: 100,
+  fuel_decay_per_s: 1.0,
+  fuel_per_mote: 10,
+  relight_cost: 5,
+  win_ratio: 0.6,
+  drain_per_s: 5,
+  low_fuel_threshold: 30,
+  capacity_max: 20,
+  // TICKET-03 scoring: per_second_left removed (0). Other new score items live in C.score_*.
+  score: { per_mote: 5, per_lantern: 100, per_stun: 5, per_second_left: 0, per_flame_left: 50 },
 };
 
 // Other standard constants from TICKET-02 (not tuning keys). All times in ticks (60 Hz).
 export const C = {
+  // TICKET-03
+  score_per_mote: 5,
+  score_first_light: 100,
+  score_relight: 40,
+  score_stun_drain: 15,
+  score_dawn_per_lit: 50,
+  drain_dist: 2,
+  drain_break_dist: 6,
+  fuel_drain_event_ticks: 60,
   jump_velocity: 7.0,
   gravity: 20,
   height_tolerance: 1.5,       // pickup + shade contact vertical tolerance

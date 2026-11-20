@@ -6,7 +6,7 @@ const steps = (start, step, n) => Array.from({ length: n }, (_, i) => start + i 
 const lanterns = (list) => list.map((pos, i) => ({ id: `L${i + 1}`, pos }));
 
 const night1 = {
-  night: 1, name: 'Đảo Bến', duration: 300, shadeSpeed: 4.0,
+  night: 1, name: 'Đảo Bến', duration: 240, shadeSpeed: 4.0,
   start: [0, 0, 0],
   lanterns: lanterns([[0, 0, 25], [23.8, 0, 7.7], [14.7, 0, -20.2], [-14.7, 0, -20.2], [-23.8, 0, 7.7]]),
   motePoints: [...ring(12, steps(0, 45, 8)), ...ring(33, steps(0, 22.5, 16))],
@@ -18,7 +18,7 @@ const night1 = {
 };
 
 const night2 = {
-  night: 2, name: 'Đảo Cau', duration: 330, shadeSpeed: 4.0,
+  night: 2, name: 'Đảo Cau', duration: 270, shadeSpeed: 4.0,
   start: [0, 0, 0],
   lanterns: lanterns([[0, 0, 20], [17, 0, -10], [-17, 0, -10], [70, 0, 20], [87, 0, -10], [53, 0, -10]]),
   motePoints: [0, 70].flatMap((cx) => [...ring(10, steps(0, 90, 4), 0, cx), ...ring(22, steps(0, 45, 8), 0, cx)]),
@@ -43,7 +43,7 @@ function rampHeight(x, z) {
   return null;
 }
 const night3 = {
-  night: 3, name: 'Đảo Chuông', duration: 360, shadeSpeed: 4.5,
+  night: 3, name: 'Đảo Chuông', duration: 300, shadeSpeed: 4.5,
   start: [0, 0, -30], // ASSUMPTION: (0,0,0) is inside the bell tower on Night 3
   lanterns: lanterns([[0, 6, 6], [18, 3, 10], [-18, 3, 10], [35, 0, -10], [-35, 0, -10], [20, 0, -35], [-20, 0, -35]]),
   motePoints: [...ring(34, steps(0, 20, 18), 0), ...ring(18, steps(20, 20, 8), 3), ...ring(5, [45, 135, 225, 315], 6)],

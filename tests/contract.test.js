@@ -5,13 +5,15 @@ import { readFileSync } from 'node:fs';
 import { TUNING as T } from '../src/core/tuning.js';
 import { run, quiet, near } from './helpers.js';
 
-test('game.contract.json v1.1 mirrors the standard numbers', () => {
+// UPDATED Phase 3: contract v1.2 (TICKET-03 §7) — version, durations 240/270/300 and new fuel keys.
+test('game.contract.json v1.2 mirrors the standard numbers', () => {
   const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-  assert.equal(c.contract_version, '1.1');
+  assert.equal(c.contract_version, '1.2');
   for (const k of ['team', 'build_cmd', 'run_cmd', 'headless_cmd']) assert.equal(typeof c[k], 'string');
   assert.deepEqual(c.tuning, T);
   assert.equal(T.player_speed, 6); assert.equal(T.carry_capacity, 10); assert.equal(T.lantern_cost, 10);
-  assert.equal(T.dash_speed, 14); assert.equal(T.night3_duration_s, 360);
+  assert.equal(T.dash_speed, 14); assert.equal(T.night3_duration_s, 300); assert.equal(T.night1_duration_s, 240);
+  for (const [k, v] of Object.entries({ fuel_max: 100, fuel_decay_per_s: 1.0, fuel_per_mote: 10, relight_cost: 5, win_ratio: 0.6, drain_per_s: 5, low_fuel_threshold: 30, capacity_max: 20 })) assert.equal(T[k], v, k);
 });
 
 test('determinism on every night (incl. generated ids)', () => {
@@ -30,7 +32,8 @@ test('tick model: snapshot 0 before input, night_start at tick 1, N steps, caden
   assert.deepEqual(r.snaps.map((s) => s.tick), [0, 10, 20]);
   assert.deepEqual(r.snaps[0].player.pos, [0, 0, 0]);
   assert.deepEqual(r.end, { type: 'end', ticks: 25, state: 'playing', score: 0 });
-  assert.equal(r.snaps[1].time_left_s, Math.round((300 - 10 / 60) * 1000) / 1000);
+  // UPDATED Phase 3: Night 1 is 240 s (TICKET-03 §3).
+  assert.equal(r.snaps[1].time_left_s, Math.round((240 - 10 / 60) * 1000) / 1000);
   assert.equal(r.snaps[1].sim_tick, 10);
 });
 
@@ -60,14 +63,15 @@ test('pickup: XZ <= 1.0, capacity 10, pickup itself scores 0', () => {
   assert.equal(run({ ticks: 1, scenario: quiet({ player: { carried: 10 }, motes: [[0, 0, 0]] }) }).game.length, 0);
 });
 
-test('deposit min(carried, missing); +10 per deposited mote, +100 per lantern; pre-lit gives nothing', () => {
+// UPDATED Phase 3: +5 per deposited mote (TICKET-03 §5, was +10).
+test('deposit min(carried, missing); +5 per deposited mote, +100 first light; pre-lit gives nothing', () => {
   const sc = quiet({ player: { carried: 10 }, lanterns: [{ id: 'L1', pos: [0, 0, 2], deposited: 8 }] });
   const r = run({ ticks: 10, every: 10, scenario: sc, inputs: { frames: [{ tick: 3, interact: true }] } });
   assert.deepEqual(r.game.map((e) => [e.tick, e.name, e.data]), [
     [4, 'deposit', { lantern_id: 'L1', amount: 2, deposited: 10 }],
-    [4, 'lantern_lit', { lantern_id: 'L1' }],
+    [4, 'lantern_lit', { lantern_id: 'L1', relight: false }],
   ]);
-  assert.equal(r.end.score, 2 * 10 + 100);
+  assert.equal(r.end.score, 2 * 5 + 100);
   assert.equal(r.snaps.at(-1).player.carried, 8);
   const pre = run({ ticks: 5, scenario: quiet({ lanterns: [{ id: 'L2', lit: true }] }) });
   assert.equal(pre.game.length, 0);
@@ -80,20 +84,24 @@ test('interact tie-break: equal distance -> smaller id', () => {
   assert.equal(r.ev('deposit')[0].data.lantern_id, 'L2');
 });
 
-test('win: all lit -> won/all_lit, bonus floor(s)*2 + 50*flames, stops early', () => {
+// REPLACED Phase 3: "win as soon as all lanterns are lit" (all_lit) no longer exists (TICKET-03 §3).
+// New rule: survive until dawn with >= ceil(0.6 * n) lanterns lit -> won/dawn_survived. See tests/phase3.test.js.
+test('no early win: lighting every lantern does not end the night', () => {
   const lanterns = ['L1', 'L2', 'L3', 'L4'].map((id) => ({ id, lit: true })).concat([{ id: 'L5', pos: [0, 0, 1], deposited: 0 }]);
   const r = run({ ticks: 600, scenario: quiet({ player: { carried: 10 }, lanterns }), inputs: { frames: [{ tick: 0, interact: true }] } });
-  assert.deepEqual(r.ev('game_over')[0], { type: 'event', tick: 1, name: 'game_over', data: { result: 'won', reason: 'all_lit' } });
-  assert.deepEqual(r.end, { type: 'end', ticks: 1, state: 'won', score: 100 + 100 + 299 * 2 + 3 * 50 });
+  assert.equal(r.ev('lantern_lit').length, 1);
+  assert.equal(r.ev('game_over').length, 0);
+  assert.deepEqual(r.end, { type: 'end', ticks: 600, state: 'playing', score: 10 * 5 + 100 });
 });
 
-test('dawn: lost/dawn at exactly time_left_s; win on the last tick beats dawn', () => {
+// UPDATED Phase 3: at dawn the lit count decides (TICKET-03 §3); reason is dawn_survived when won.
+test('dawn: lost/dawn below threshold; lighting on the last tick reaches the threshold -> won', () => {
   const r = run({ ticks: 1000, scenario: quiet({ time_left_s: 2 }) });
   assert.deepEqual(r.ev('game_over')[0], { type: 'event', tick: 120, name: 'game_over', data: { result: 'lost', reason: 'dawn' } });
   assert.equal(r.end.ticks, 120);
   const lanterns = ['L1', 'L2', 'L3', 'L4'].map((id) => ({ id, lit: true })).concat([{ id: 'L5', pos: [0, 0, 1] }]);
   const w = run({ ticks: 100, scenario: quiet({ time_left_s: 1, player: { carried: 10 }, lanterns }), inputs: { frames: [{ tick: 59, interact: true }] } });
-  assert.equal(w.ev('game_over')[0].data.result, 'won');
+  assert.deepEqual(w.ev('game_over')[0].data, { result: 'won', reason: 'dawn_survived' });
   assert.equal(w.ev('game_over')[0].tick, 60);
 });
 
