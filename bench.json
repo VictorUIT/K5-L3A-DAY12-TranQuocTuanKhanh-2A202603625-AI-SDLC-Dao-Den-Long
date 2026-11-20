@@ -1,0 +1,15 @@
+{
+  "contract_version": "1.3",
+  "avg_fps": 506.68,
+  "p1_low_fps": 66.67,
+  "frame_ms_p95": 3.9,
+  "frames": 15200,
+  "load_ms": 776,
+  "peak_mem_mb": null,
+  "peak_mem_note": "Web build: the game runs in a multi-process browser; per-process RSS of the renderer is not exposed to the page. JS heap peak is reported instead.",
+  "js_heap_peak_mb": 28,
+  "vsync_off": true,
+  "renderer": "three.js r170 WebGL2 in Chrome Chrome/157.0.8103.52 (ANGLE (Intel, Intel(R) UHD Graphics (0x00004626) Direct3D11 vs_5_0 ps_5_0, D3D11))",
+  "os": "Windows_NT 10.0.26200 (x64), 12th Gen Intel(R) Core(TM) i7-12800H, 16 GB RAM",
+  "viewport": "1280x720"
+}

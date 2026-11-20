@@ -6,9 +6,9 @@ import { TUNING as T } from '../src/core/tuning.js';
 import { run, quiet, near } from './helpers.js';
 
 // UPDATED Phase 3: contract v1.2 (TICKET-03 §7) — version, durations 240/270/300 and new fuel keys.
-test('game.contract.json v1.2 mirrors the standard numbers', () => {
+test('game.contract.json v1.3 mirrors the standard numbers', () => {
   const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-  assert.equal(c.contract_version, '1.2');
+  assert.equal(c.contract_version, '1.3'); // UPDATED Phase 4: v1.3 keeps every v1.2 rule
   for (const k of ['team', 'build_cmd', 'run_cmd', 'headless_cmd']) assert.equal(typeof c[k], 'string');
   assert.deepEqual(c.tuning, T);
   assert.equal(T.player_speed, 6); assert.equal(T.carry_capacity, 10); assert.equal(T.lantern_cost, 10);

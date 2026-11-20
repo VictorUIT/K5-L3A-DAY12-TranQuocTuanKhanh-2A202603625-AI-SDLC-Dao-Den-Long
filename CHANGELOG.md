@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0] Phase 4: "Bình minh" (TICKET-04, contract v1.3)
+### Thêm mới
+- Chế độ benchmark `scripts/bench.mjs` (Chrome 1280×720 qua puppeteer, vsync tắt, cảnh chuẩn 200 Bóng Mực / 100 đom đóm) → `bench.json`.
+- Soak test `scripts/soak.mjs` (10 Đêm trong một tiến trình) → `soak.json`.
+- Bảng xếp hạng cục bộ lưu trên đĩa (`~/.dao-den-long/leaderboard.json`), màn hình Bảng xếp hạng, nhập tên, lệnh `--export-leaderboard`.
+- Accessibility: đổi phím (báo trùng, khôi phục mặc định), phụ đề/chỉ báo hình ảnh, giảm chuyển động, chữ lớn ×1.25, chữ UI ≥ 18 px.
+- `npm start` (`scripts/play.mjs`) thay cho `npm run dev` làm `run_cmd`. Script release, Dockerfile.
+### Thay đổi
+- `game.contract.json`: `contract_version` 1.3, thêm `bench_cmd`, `soak_cmd`; `build_cmd` cài thêm Chrome cho bench.
+- `npm test` dùng `scripts/run-tests.mjs` (Node 20 không hỗ trợ glob trong `node --test`).
+- Không có breaking change với headless v1.0–v1.2.
+
 ## [Phase 3] Contract v1.2: "Đèn cạn dầu" (TICKET-03)
 
 ### Breaking changes

@@ -1,34 +1,47 @@
 :root { --night: #0E1430; --fog: #1B2350; --ui: #F5F1E6; --gold: #F2C14E; --danger: #FF5A5F; --lamp: #FFB347; }
+html { font-size: 18px; }
+html.big { font-size: 22.5px; }
 html, body { margin: 0; height: 100%; background: var(--night); overflow: hidden; font-family: system-ui, sans-serif; color: var(--ui); }
 canvas { display: block; }
 .hidden { display: none !important; }
 #hud > div { position: fixed; pointer-events: none; text-shadow: 0 1px 3px #000; }
-#flames { top: 14px; left: 16px; font-size: 26px; color: var(--lamp); letter-spacing: 4px; }
-#clock { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; font-variant-numeric: tabular-nums; }
+#flames { top: 14px; left: 16px; font-size: 1.5rem; color: var(--lamp); letter-spacing: 4px; }
+#clock { top: 12px; left: 50%; transform: translateX(-50%); font-size: 1.7rem; font-variant-numeric: tabular-nums; }
 #clock.low { color: var(--danger); animation: blink 0.8s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0.25; } }
-#tr { top: 14px; right: 16px; font-size: 20px; text-align: right; }
+#tr { top: 14px; right: 16px; font-size: 1.1rem; text-align: right; }
 #tr span { display: block; }
 #score { color: var(--gold); }
 #bar { bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
 #bar i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--gold); background: #0006; }
 #bar i.on { background: #FFF6C2; box-shadow: 0 0 10px #FFE58A; }
-#cds { bottom: 16px; right: 16px; display: flex; gap: 8px; font-size: 13px; }
+#cds { bottom: 16px; right: 16px; display: flex; gap: 8px; font-size: 1rem; }
 #cds span { padding: 8px 10px; border-radius: 10px; border: 2px solid var(--gold); background: #0008; min-width: 54px; text-align: center; }
 #cds span.cd { opacity: 0.4; }
 #cdCharm:empty { display: none; }
 #cdCharm { border-color: #C8102E !important; }
-#prompt { bottom: 60px; left: 50%; transform: translateX(-50%); font-size: 18px; background: #0009; padding: 6px 12px; border-radius: 8px; }
+#prompt { bottom: 60px; left: 50%; transform: translateX(-50%); font-size: 1.1rem; background: #0009; padding: 6px 12px; border-radius: 8px; }
 #prompt:empty { display: none; }
 #arrow { font-size: 34px; color: var(--lamp); top: 50%; left: 50%; display: none; }
-#windWarn { top: 56px; left: 50%; transform: translateX(-50%); color: #8FA3B8; font-size: 16px; }
+#windWarn { top: 56px; left: 50%; transform: translateX(-50%); color: #8FA3B8; font-size: 1rem; }
 .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: #0E1430d0; text-align: center; gap: 10px; }
 .overlay:empty { display: none; }
 .overlay h1 { color: var(--lamp); font-size: 44px; margin: 0; }
 .overlay h2 { color: var(--gold); margin: 0; }
 .overlay p { max-width: 560px; line-height: 1.5; margin: 4px 16px; }
-.overlay button { font: inherit; font-size: 18px; color: var(--night); background: var(--gold); border: 0; border-radius: 10px; padding: 10px 24px; cursor: pointer; min-width: 220px; }
+.overlay button { font: inherit; font-size: 1.1rem; color: var(--night); background: var(--gold); border: 0; border-radius: 10px; padding: 10px 24px; cursor: pointer; min-width: 220px; }
 .overlay button:hover { background: var(--lamp); }
 .overlay label { display: flex; gap: 10px; align-items: center; }
 #bar b { margin-left: 8px; font-weight: 600; align-self: center; }
 body.cb #clock.low { color: #FFFFFF; }
+#subs { bottom: 110px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1.1rem; }
+#subs div { background: #000b; padding: 4px 12px; border-radius: 8px; margin-top: 4px; }
+#spawnArrow { font-size: 34px; color: #7A3CFF; top: 50%; left: 50%; display: none; }
+#flash { position: fixed; inset: 0; background: #FF5A5F; opacity: 0; pointer-events: none; }
+.overlay table.keys { border-collapse: collapse; }
+.overlay table.keys td, .overlay table.keys th { padding: 4px 14px; }
+.overlay table.keys button { min-width: 140px; padding: 4px 10px; }
+.overlay button.dup { background: var(--danger); }
+.overlay .warn { color: var(--danger); }
+body.cb .overlay .warn { color: #FFFFFF; }
+.overlay input#nm { font: inherit; padding: 6px 10px; border-radius: 8px; border: 2px solid var(--gold); }

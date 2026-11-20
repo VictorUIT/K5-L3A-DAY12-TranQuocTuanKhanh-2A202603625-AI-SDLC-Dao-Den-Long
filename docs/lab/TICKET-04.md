@@ -1,0 +1,13 @@
+# TICKET-04 "Bình minh: phát hành v1.0.0" (Phase 4), Contract v1.3 (tóm tắt các yêu cầu đo được)
+
+Loại: Non-functional + Release · Tag nộp: phase-4 + GitHub Release v1.0.0 · Contract: v1.3
+
+1. **Benchmark**: `<bench_cmd> --seed 42 --duration 30 --out bench.json`. Cửa sổ 1280×720, tắt vsync nếu được; Đêm 1 đầy đủ hiệu ứng; đúng 200 Bóng Mực `wander` rải đều (seed 42), 100 đom đóm, L1–L3 sáng fuel 100; tắt sinh thêm, sát thương, nhặt, hao dầu, kết thúc Đêm; Mây đứng ở (0,0,0); camera bay vòng r = 30 m, Y = 15, nhìn (0,0,0), bắt đầu ở (30,15,0), ngược chiều kim đồng hồ, 15 s/vòng; 3 s khởi động rồi đo đúng `--duration` giây, thoát mã 0. Output: contract_version, avg_fps = 1000N/Σdt, p1_low_fps = 1000/mean(k dt lớn nhất, k = max(1, ceil(0.01N))), frame_ms_p95, frames, load_ms, peak_mem_mb (null nếu web, giải thích), vsync_off, renderer, os. Ngưỡng: avg_fps ≥ 60 · p1_low_fps ≥ 30 · load_ms ≤ 10000 (đo trên máy chấm).
+2. **Soak**: `<soak_cmd> --seed 7 --nights 10 --out soak.json`. 10 Đêm trong một tiến trình (1→2→3 xoay vòng), Đêm i dùng seed 7 + i; input ngẫu nhiên: mỗi 30 tick đổi hướng, mỗi tick 5% nhảy, 3% lướt, 2% tỏa sáng, 10% tương tác. mem_start_mb = RSS sau khi tải xong Đêm đầu; mem_end_mb = RSS sau khi reset Đêm cuối. Output {nights, crashes, results, mem_start_mb, mem_end_mb, duration_s}. Ngưỡng: crashes = 0, mem_end ≤ 1.2 × mem_start.
+3. **Bảng xếp hạng cục bộ**: nhập tên sau Bình Minh hoặc khi thua; tên 3–12 ký tự [A-Za-z0-9_] (tiếng Việt có dấu là điểm cộng); mỗi mục: name, score, nights_won (0–3), achieved_at (ISO 8601 có múi giờ), seed; top 10, score giảm dần, bằng điểm thì ai đạt trước đứng trên; lưu trên đĩa; màn hình từ menu chính; `<run_cmd> --export-leaderboard out.json` → {"entries": [...]}.
+4. **Accessibility**: đổi phím mọi hành động (4 hướng, nhảy, lướt, tương tác, tỏa sáng, tạm dừng), báo trùng, "Khôi phục mặc định", được lưu; phụ đề/chỉ báo: Bóng Mực xuất hiện (+ mũi tên ở mép màn hình), gió sắp thổi, 10 s cuối, đèn fuel < 30; giảm chuyển động (tắt rung camera, chớp màn hình); chữ UI ≥ 18 px ở 1280×720, tùy chọn chữ lớn ×1.25.
+5. **Đóng gói**: clone sạch → ≤ 3 lệnh → chơi được; README có mô tả, ảnh/GIF, yêu cầu hệ thống, cài đặt, điều khiển, test, headless, bench, soak; CHANGELOG cả 4 phase; CREDITS; LICENSE; Release v1.0.0 có bản chạy được.
+6. **Contract v1.3**: contract_version "1.3"; game.contract.json thêm bench_cmd, soak_cmd; giữ mọi yêu cầu v1.0–v1.2.
+7. **Retro** 1–2 trang và **video** .mp4 < 5 phút.
+
+DoD: bằng chứng; tag phase-4 + Release v1.0.0; bench.json và soak.json được commit; test ẩn Phase 1–3 còn hiệu lực vẫn đạt; repo public, đủ harness và tài liệu.

@@ -16,7 +16,7 @@ const FU = TPS, FUEL_MAX = T.fuel_max * FU, LOW_FUEL = T.low_fuel_threshold * FU
 const capacityOf = (p) => Math.min(T.capacity_max, T.carry_capacity + 2 * p.successfulLights);
 const isSafe = (l) => l.lit && l.fuel >= LOW_FUEL;
 
-export function createWorld({ seed = 1, night = 1, scenario = null } = {}) {
+export function createWorld({ seed = 1, night = 1, scenario = null, bench = false } = {}) {
   const map = MAPS[night];
   if (!map) throw new Error(`unknown night ${night}`);
   const sc = scenario ?? {};
@@ -36,7 +36,7 @@ export function createWorld({ seed = 1, night = 1, scenario = null } = {}) {
     randomDrifters: sc.random_drifters ?? map.drifters, windEnabled: sc.wind_enabled ?? map.wind,
     wind: { active: false, dir: 0, left: 0, pendingDir: null },
     prev: { jump: false, interact: false, pulse: false, dash: false, pause: false },
-    safeLit: new Set(),
+    safeLit: new Set(), bench,
   };
   const p = w.player;
   if (sc.player) {
@@ -92,7 +92,18 @@ export function createWorld({ seed = 1, night = 1, scenario = null } = {}) {
     id: c.id ?? `C${i + 1}`, pos: [...(c.pos ?? map.charms.find((m) => m.id === c.id)?.pos ?? [0, 0, 0])],
     available: c.available ?? true, respawn: c.respawn_ticks ?? (c.available === false ? C.charm_respawn_ticks : 0),
   }));
+  if (bench) setupBench(w);
   return w;
+}
+
+// TICKET-04 §1 benchmark scene: Night 1, 200 wander shades + 100 motes spread over the island (seeded),
+// L1-L3 lit with fuel 100. Spawning, damage, pickup, fuel decay and night end are disabled (see step()).
+function setupBench(w) {
+  w.randomMotes = w.randomShades = w.randomDrifters = w.windEnabled = false;
+  const pt = () => { const a = w.rng() * Math.PI * 2, r = 3 + Math.sqrt(w.rng()) * 34; return [r3(Math.cos(a) * r), 0, r3(Math.sin(a) * r)]; };
+  w.motes = Array.from({ length: 100 }, () => ({ id: `M${w.nextMote++}`, pos: pt(), kind: 'random', ttl: null, born: 0, point: null }));
+  w.shades = Array.from({ length: 200 }, () => { const p = pt(); return newShade(`S${w.nextShade++}`, [p[0], C.shade_height, p[2]], 'wander'); });
+  for (const l of w.lanterns.slice(0, 3)) { l.lit = true; l.fuel = FUEL_MAX; l.everLit = true; w.safeLit.add(l.id); }
 }
 
 function newShade(id, pos, state) {
@@ -145,7 +156,7 @@ export function step(w, input = {}, emit = () => {}) {
   for (const d of w.drifters) if (d.state === 'flee' && d.left === 0) { d.state = 'removed'; d.stolen = 0; }
   updateWind(w);
   // 2b. Fuel (TICKET-03): decay 1/s + 5/s per draining shade; then lanterns with fuel <= 0 go out.
-  for (const l of w.lanterns) if (l.lit) l.fuel -= 1;
+  if (!w.bench) for (const l of w.lanterns) if (l.lit) l.fuel -= 1;
   for (const s of [...w.shades].sort(byId)) {
     if (s.state !== 'drain') continue;
     const l = w.lanterns.find((x) => x.id === s.lantern);
@@ -179,7 +190,7 @@ export function step(w, input = {}, emit = () => {}) {
       if (p.flames > 0) { p.fallWait = C.fall_wait_ticks; p.vel = [0, 0, 0]; }
     }
   }
-  const alive = p.flames > 0 && p.fallWait === 0;
+  const alive = p.flames > 0 && p.fallWait === 0 && !w.bench; // bench: no pickup/interact/damage
 
   // 4. Pickup motes and charms.
   if (alive) {
@@ -311,7 +322,7 @@ export function step(w, input = {}, emit = () => {}) {
       else if (!l || !l.lit || l.fuel >= LOW_FUEL || dxz(s.pos, l.pos) > C.drain_dist) { s.state = 'wander'; s.lantern = null; s.drainTicks = 0; }
       else continue; // stands still while draining
     }
-    if (alive && s.state === 'wander' && d <= C.shade_detect) s.state = 'chase';
+    if (alive && !w.bench && s.state === 'wander' && d <= C.shade_detect) s.state = 'chase';
     else if (s.state === 'chase' && (!alive || d > C.shade_lose)) s.state = 'wander';
     if (s.state === 'wander') {
       // TICKET-03: wander shades go for the nearest weak lantern (lit, fuel < 30; tie -> smaller id), else nearest unlit.
@@ -405,6 +416,7 @@ export function step(w, input = {}, emit = () => {}) {
 
   // 11. Win / lose.
   // TICKET-03: no early win. At dawn: survive with >= ceil(0.6 * lanterns) lit -> won/dawn_survived.
+  if (w.bench) return done(); // bench: the night never ends
   if (p.flames <= 0) endGame(w, 'lost', 'no_flames', emit);
   else if (w.timeLeftTicks <= 0) {
     const lit = w.lanterns.filter((l) => l.lit).length;
